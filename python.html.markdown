@@ -436,6 +436,38 @@ j.get_species() #=> "H. neanderthalensis"
 # Call the static method
 Human.grunt() #=> "*grunt*"
 
+# There are no private instance variables in Python.
+# It is common practice to name variables which are not
+# intended for public use with a leading underscore
+class SomeClass(object):
+    def __init__(self, some_string):
+        self._private = some_string
+
+# This will still print the "private" variable. Python
+# doesn't provide an effective encapsulation of the
+# variable.
+c = SomeClass("Don't look at me. I am private.")
+print c._private
+
+# Some confuse name mangling with declaring a private
+# variable. Name mangling works by naming a variable
+# with to leading underscores
+class SomeClass(object):
+    def __init__(self, some_string):
+        self.__private = some_string
+
+# Now this raises an AttributeError, so the variable
+# must be private, right?
+c = SomeClass("You can't see me. I am private! No?")
+print c.__private
+
+# Wrong. The variable name was mangled by Python to
+# contain the class name, it's still public - only under
+# a mangled name. Like so
+print c._SomeClass__private
+
+# Note: In fact, name mangling is not advised and considered
+# by Python's development community.
 
 ####################################################
 ## 6. Modules
@@ -467,8 +499,59 @@ math.sqrt(16) == m.sqrt(16) #=> True
 import math
 dir(math)
 
+####################################################
+## 7. Scopes and namespaces
+####################################################
 
+# In Python there's global and local scope.
+# Declare a global variable
+some_string = "This is a global string."
+
+# A function containing a local variable
+# by that same name
+def some_function():
+	some_string = "This is a local string."
+	print some_string
+	
+''' Let's call some_function and then print some_string
+    The output will be:
+    This is a local string.
+    This is a global string.
+'''
+some_function()
+print some_string
+
+# Reference the global variable in the local
+# scope of a function explicitly
+some_string = "This is a global string."
+
+def some_function():
+    # Create a reference to the global variable
+    global some_string
+    some_string = "This is a local string."
+    print some_string
+
+''' Let's call some_function again. We will change
+    the global variable inside the local scope
+    of some_function.
+    The output will be:
+    This is a local string.
+    This is a local string.
+'''
+some_function()
+print some_string
+	
 ```
+
+## A word on style
+
+Python's community prides itself to be focused on ease of use, readability, and
+foremost: style. That is why some coding techniques, that are perfectly applicable
+in Python, are considered bad style. Aspire to write clean und beautiful code by
+writing *pythonic* code.
+
+* [Style Guide for Python Code - PEP 8](http://www.python.org/dev/peps/pep-0008/)
+* [The Zen of Python - PEP 20](http://www.python.org/dev/peps/pep-0020/)
 
 ## Ready For More?
 
